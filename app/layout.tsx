@@ -1,3 +1,4 @@
+import './globals.css';
 export const metadata = {
   title: "Subscription Manager",
   description: "Subscription Manager Dashboard with nextjs/postgres/node",
@@ -10,7 +11,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="font-sans bg-background">
         {children}
       </body>
     </html>

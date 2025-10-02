@@ -3,12 +3,11 @@ import NavTab from "@/components/NavTab";
 
 export default function DashboardPage() {
     return (
-        <main>
+        <main className="px-6 py-4">
             <section>
-                <Header />
             </section>
             <section>
-                <NavTab/>
+                <NavTab />
             </section>
         </main>
 

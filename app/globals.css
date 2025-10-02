@@ -113,10 +113,19 @@
 }
 
 @layer base {
-  * {
+  • {
     @apply border-border outline-ring/50;
   }
+
+  /* ensure body covers full viewport and uses your variables */
+  html, body, #__next {
+    height: 100%;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground min-h-screen;
+    margin: 10;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }

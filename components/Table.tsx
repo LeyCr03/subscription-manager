@@ -1,7 +1,7 @@
+'use client';
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableFooter,
   TableHead,
@@ -9,79 +9,64 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-const invoices = [
-  {
-    invoice: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV002",
-    paymentStatus: "Pending",
-    totalAmount: "$150.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV003",
-    paymentStatus: "Unpaid",
-    totalAmount: "$350.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV004",
-    paymentStatus: "Paid",
-    totalAmount: "$450.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV005",
-    paymentStatus: "Paid",
-    totalAmount: "$550.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV007",
-    paymentStatus: "Unpaid",
-    totalAmount: "$300.00",
-    paymentMethod: "Credit Card",
-  },
-]
+import { Checkbox } from "./ui/checkbox"
+import React, { useContext, useEffect, useState } from "react"
+import { AccountType, GetAllResponseType } from "@/lib/types";
+import { ActionMenu } from "./ActionsMenu";
+import { getAccounts } from "@/lib/actions/account.actions";
+import { accounts, tableHeaders } from "@/lib/constants";
+import { FilterBar } from "./FilterBar";
+import { Pagination } from "./ui/pagination";
+import { Badge } from "./ui/badge";
 
-export function TableDemo() {
+
+export const  MainTable = () => {
+  const [searchParam, setSearchParam] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [stateData, setStateData] = useState<GetAllResponseType>();
+  const [selectedAccount, setSelectedAccounts] = useState<AccountType[]>(accounts);
+  const [promisePending, setPromisePending] = useState(true);
+
   return (
-    <Table>
-      <TableCaption>A list of your recent invoices.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[100px]">Invoice</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Method</TableHead>
-          <TableHead className="text-right">Amount</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {invoices.map((invoice) => (
-          <TableRow key={invoice.invoice}>
-            <TableCell className="font-medium">{invoice.invoice}</TableCell>
-            <TableCell>{invoice.paymentStatus}</TableCell>
-            <TableCell>{invoice.paymentMethod}</TableCell>
-            <TableCell className="text-right">{invoice.totalAmount}</TableCell>
+    <section>
+      <FilterBar searchParam={searchParam} setSearchParam={setSearchParam} />
+      <div className="p-4 border border-gray-100 rounded-md shadow-sm">
+        <Table className="p-5">
+        <TableHeader>
+          <TableRow  className="border-gray-300">
+            {tableHeaders.map(({ key, label, className }) => (
+              <TableHead key={key} className={className}>
+                {label}
+              </TableHead>
+            ))}
           </TableRow>
-        ))}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {selectedAccount.map((account, idx) => (
+            <TableRow className="border-gray-100" key={account.fullName + idx}>
+              <TableCell><Checkbox /></TableCell>
+              <TableCell className="font-medium">{account.fullName}</TableCell>
+              <TableCell className="p-5">
+                <Badge>
+                  {account.status}
+                </Badge>
+              </TableCell>
+              <TableCell>{account.last_payment.toLocaleDateString()}</TableCell>
+              <TableCell>{account.last_entry.toLocaleDateString()}</TableCell>
+              <TableCell className="justify-end">
+                <ActionMenu account={account} />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+        <TableFooter className="border-none">
+          <Pagination
+          />
+
+        </TableFooter>
+      </Table>
+      </div>
+    </section>
+
   )
 }
