@@ -19,12 +19,6 @@ export function CreateAccountForm({
 
 return (
     <form className={cn("flex flex-col gap-6", className)} {...props}>
-        <div className="flex flex-col items-center gap-2 text-center">
-            <h1 className="text-2xl font-bold">Create Account</h1>
-            <p className="text-muted-foreground text-sm text-balance">
-                Enter requested data to create account
-            </p>
-        </div>
         <div className="grid gap-6">
             <div className="grid gap-3">
                 <Label htmlFor="name">Name</Label>
@@ -36,7 +30,7 @@ return (
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button
-                        variant="outline"
+                        variant="ghost"
                         id="date"
                         className="w-48 justify-between font-normal"
                     >
@@ -59,7 +53,7 @@ return (
         </div>
         <div className="grid gap-3">
             <Label htmlFor="sex">Sex</Label>
-            <RadioGroup>
+            <RadioGroup className="flex flex-row">
                 <div className="flex items-center gap-3">
                     <RadioGroupItem value="female" id="r1" />
                     <Label htmlFor="r1">Female</Label>
@@ -70,11 +64,6 @@ return (
                 </div>
             </RadioGroup>
         </div>
-
-        <Button type="submit" className="w-full">
-            Create
-        </Button>
-       
         </form >
     )
 }

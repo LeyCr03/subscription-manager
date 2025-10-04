@@ -1,5 +1,4 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { FilterBar } from "./FilterBar"
 import { MainTable } from "./Table"
 import { Metrics } from "./Metrics"
 export default function NavTab() {
