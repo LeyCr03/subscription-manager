@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GetAllResponseType } from "../types";
+import { CreateAccount, GetAllResponseType } from "../types";
 
 const serverUrl = process.env.SERVER || "http://localhost:3001";
 console.log(serverUrl)
@@ -27,11 +27,13 @@ export async function getAccounts(
   }
 }
 
-export async function createAccount(formData: FormData) {
+export async function createAccount(data: CreateAccount) {
   const account = {
-    fullName: formData.get("fullName"),
-    sex: formData.get("sex"),
-    age: formData.get("age"),
+    name: data.name,
+    birth: data.birth,
+    age: data.age,
+    sex: data.sex,
+    registere_at: data.registered_at
   };
 
   try {
@@ -43,19 +45,6 @@ export async function createAccount(formData: FormData) {
   }
 }
 
-export async function editAccount(formData: FormData, id: string) {
-  const account = {
-    status: formData.get("status"),
-  };
-
-  try {
-    const response = await axios.put(`${serverUrl}/api/accounts/${id}`, { account });
-    return response.data;
-  } catch (error: any) {
-    console.error("Error updating account status:", error.message);
-    // Handle the error (e.g., show a user-friendly message)
-  }
-}
 
 export async function deleteAccount(id: string) {
   try {

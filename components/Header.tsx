@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Eclipse, PenIcon, UserRound } from "lucide-react"
@@ -34,24 +35,24 @@ export default function Header() {
                             </div>
                             <div className="grid gap-3">
                                 <Label htmlFor="name">Name</Label>
-                                <div className="flex flex-row items-center px-2 border rounded-md">
-                                    <Input id="name" defaultValue="User Name" className="border-none  shadow-none" />
-                                    <PenIcon size={20} />
+                                <div className="flex flex-row items-center border-gray-200 shadow-sm pr-2 rounded-md">
+                                    <Input id="name" defaultValue="User Name" className="border-none rounded-r-none shadow-none" />
+                                    <PenIcon size={20} className="ml-2" />
                                 </div>
 
                             </div>
                             <div className="grid gap-3">
                                 <Label htmlFor="email">Email</Label>
-                                <div className="flex flex-row items-center px-2 border rounded-md">
-                                    <Input id="email" defaultValue="Email" className="border-none shadow-none" />
-                                    <PenIcon size={20} />
+                                <div className="flex flex-row items-center pr-2 border rounded-md border-gray-200 shadow-sm ">
+                                    <Input id="email" defaultValue="Email" className="border-none rounded-r-none shadow-none" />
+                                    <PenIcon size={20} className="ml-2" />
                                 </div>
                             </div>
                             <div className="grid gap-3">
                                 <Label htmlFor="password">Password</Label>
-                                <div className="flex flex-row items-center px-2 border rounded-md">
-                                    <Input id="password" defaultValue="password" className="border-none shadow-none" />
-                                    <PenIcon size={20} />
+                                <div className="flex flex-row items-center  pr-2 border rounded-md border-gray-200 shadow-sm">
+                                    <Input id="password" defaultValue="password" className="border-none rounded-r-none shadow-none" />
+                                    <PenIcon size={20} className="ml-2"/>
                                 </div>
                             </div>
                         </div>
@@ -78,7 +79,7 @@ export default function Header() {
                         </a>
                     </Button>
 
-                    <Switch id="mode" className="h-5" />
+                    <Switch  id="mode" className="h-5"/>
                     <Eclipse className="h-6 w-6" />
 
                 </div>
@@ -86,35 +87,5 @@ export default function Header() {
         </header>
 
     )
-
-    {/* <Sheet>
-      <SheetTrigger asChild>
-        <Button variant="outline">Open</Button>
-      </SheetTrigger>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>Edit profile</SheetTitle>
-          <SheetDescription>
-            Make changes to your profile here. Click save when you&apos;re done.
-          </SheetDescription>
-        </SheetHeader>
-        <div className="grid flex-1 auto-rows-min gap-6 px-4">
-          <div className="grid gap-3">
-            <Label htmlFor="sheet-demo-name">Name</Label>
-            <Input id="sheet-demo-name" defaultValue="Pedro Duarte" />
-          </div>
-          <div className="grid gap-3">
-            <Label htmlFor="sheet-demo-username">Username</Label>
-            <Input id="sheet-demo-username" defaultValue="@peduarte" />
-          </div>
-        </div>
-        <SheetFooter>
-          <Button type="submit">Save changes</Button>
-          <SheetClose asChild>
-            <Button variant="outline">Close</Button>
-          </SheetClose>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet> */}
 
 }

@@ -16,16 +16,12 @@ import { ActionMenu } from "./ActionsMenu";
 import { getAccounts } from "@/lib/actions/account.actions";
 import { accounts, tableHeaders } from "@/lib/constants";
 import { FilterBar } from "./FilterBar";
-import { Pagination } from "./ui/pagination";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "./ui/pagination";
 import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
-import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { Button } from "./ui/button";
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "./ui/drawer";
 import { DollarSign, Minus, Plus } from "lucide-react";
-import { ResponsiveContainer, BarChart, Bar } from "recharts";
 import { Calendar } from "./ui/calendar";
 
 
@@ -33,10 +29,42 @@ export const MainTable = () => {
   const [searchParam, setSearchParam] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [stateData, setStateData] = useState<GetAllResponseType>();
-  const [selectedAccount, setSelectedAccounts] = useState<AccountType[]>(accounts);
+  const [selectedAccount, setSelectedAccounts] = useState<AccountType[]>([]);
   const [promisePending, setPromisePending] = useState(true);
   const [entry, setEntry] = useState(false);
   const [date, setDate] = React.useState<Date | undefined>(new Date())
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setPromisePending(true); // Start loading
+      try {
+        const data = await getAccounts(currentPage, searchParam);
+        setStateData(data);
+        setSelectedAccounts(data.accounts);  // Update selected accounts from fetched data
+      } catch (error) {
+        console.error("Error fetching accounts:", error);
+        // Handle error appropriately - display a message to the user
+      } finally {
+        setPromisePending(false); // End loading
+      }
+    };
+
+   fetchData();
+  }, [currentPage, searchParam]);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  if (promisePending) {
+    return <div>Loading...</div>;
+  }
+
+  if (!stateData) {
+    return <div>Error loading data. Please try again later.</div>;
+  }
+
+  const totalPages = Math.ceil(stateData.total / stateData.pageSize); // calculate total pages
 
 
   return (
@@ -84,7 +112,7 @@ export const MainTable = () => {
                         <DrawerFooter>
                           <Button>Submit</Button>
                           <DrawerClose asChild>
-                            <Button variant="outline">Cancel</Button>
+                            Cancel
                           </DrawerClose>
                         </DrawerFooter>
                       </div>
@@ -133,7 +161,7 @@ export const MainTable = () => {
                         <DrawerFooter>
                           <Button>Submit</Button>
                           <DrawerClose asChild>
-                            <Button variant="outline">Cancel</Button>
+                            Cancel
                           </DrawerClose>
                         </DrawerFooter>
                       </div>
@@ -143,9 +171,24 @@ export const MainTable = () => {
               </TableRow>
             ))}
           </TableBody>
-          <TableFooter className="border-none">
-            <Pagination
-            />
+          <TableFooter >
+            <Pagination>
+              <PaginationContent >
+                  <PaginationPrevious href="#" onClick={() => handlePageChange(currentPage - 1)} />
+                  {/* Render Pagination Items */}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <PaginationItem key={page}>
+                         <PaginationLink
+                               href="#"
+                              onClick={() => handlePageChange(page)}
+                          >
+                              {page}
+                          </PaginationLink>
+                      </PaginationItem>
+                  ))}
+                  <PaginationNext href="#" onClick={() => handlePageChange(currentPage + 1)} />
+              </PaginationContent>
+          </Pagination>
 
           </TableFooter>
         </Table>

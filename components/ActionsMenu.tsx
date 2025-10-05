@@ -1,13 +1,5 @@
 
 import * as React from "react"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { ChevronDownIcon, EllipsisVertical, PenIcon } from "lucide-react"
 import { AccountType } from "@/lib/types";
 import { Button } from "./ui/button";
@@ -21,7 +13,6 @@ import { Calendar } from "./ui/calendar";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 export function ActionMenu({ account }: { account: AccountType }) {
-
     const clickOnEdit = () => {
     };
 
@@ -45,7 +36,7 @@ export function ActionMenu({ account }: { account: AccountType }) {
                     <div className="grid gap-3">
                         <Label htmlFor="name">Name</Label>
                         <div className="flex flex-row items-center pr-2 border rounded-md">
-                            <Input id="name" defaultValue={account.fullName} className="border-none mr-2 shadow-none" />
+                            <Input id="name" defaultValue={account.fullName} className="border-none rounded-r-none mr-2 shadow-none" />
                             <PenIcon size={20} />
                         </div>
 
@@ -71,10 +62,72 @@ export function ActionMenu({ account }: { account: AccountType }) {
                                     <SelectItem value="suspended">SUSPENDED</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
-                        </Select></div>
+                        </Select>
+                    </div>
+
+                    <div className="flex justify-between gap-10">
+                        <div className="grid gap-3">
+                            <Label htmlFor="payments" className="px-1">
+                                Payments
+                            </Label>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        id="date"
+                                        className="w-full px-4 justify-between font-normal"
+                                    >
+                                        {account.last_payment.toLocaleDateString()}
+                                        <ChevronDownIcon />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+                                    <Calendar
+                                        mode="single"
+                                        selected={account.last_payment}
+                                        captionLayout="dropdown"
+                                        onSelect={() => { }}
+                                        disabled={(date) =>
+                                            date > new Date()
+                                        }
+                                    />
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+                        <div className="grid gap-3">
+
+                            <Label htmlFor="entries" className="px-1">
+                                Entries
+                            </Label>
+                            <Popover >
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        id="date"
+                                        className="w-full px-4 justify-between font-normal"
+                                    >
+                                        {account.last_entry.toLocaleDateString()}
+                                        <ChevronDownIcon />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto overflow-hidden p-0" align="end">
+                                    <Calendar
+                                        mode="single"
+                                        selected={account.last_entry}
+                                        captionLayout="dropdown"
+                                        onSelect={() => { }}
+                                        disabled={(date) =>
+                                            date > new Date()
+                                        }
+                                    />
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+                    </div>
 
 
                 </div>
+
                 <SheetFooter>
                     <Button type="submit">Save changes</Button>
                     <AlertDialog>

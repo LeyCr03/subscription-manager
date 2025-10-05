@@ -17,3 +17,26 @@ export type GetAllResponseType = {
     currentPage: number,
     pageSize: number
 }
+
+export enum Sex {
+  MALE = 'male',
+  FEMALE = 'female',
+}
+
+export enum Status {
+    ACTIVE = 'active',
+    SUSPENDED = 'suspended',
+}
+
+export type AgeRange = '18-25' | '25-35' | '35-45' | '45-70';
+
+export type CreateAccount = {
+    name: string;
+    birth: Date
+    age: number
+    sex: Sex
+    registered_at: Date
+
+}
+
+
