@@ -5,24 +5,17 @@ const serverUrl = process.env.SERVER || "http://localhost:3001";
 console.log(serverUrl)
 
 export async function getAccounts(
-  currentPage: number,
-  searchParam: string
 ): Promise<GetAllResponseType> {
   try {
     const response = await axios.get(
-      `${serverUrl}/api/accounts?page=${currentPage}&limit=5&search=${searchParam}`
+      `${serverUrl}/api/accounts/by/registration`
     );
     return response.data;
   } catch (error: any) {
     console.error("Error fetching data from accounts:", error.message);
-    // Return an empty array or handle the error as needed
     return {
       accounts: [],
-      nextPage: null,
-      previousPage: null,
       total: 0,
-      currentPage: 0,
-      pageSize: 0,
     };
   }
 }
@@ -33,13 +26,14 @@ export async function createAccount(data: CreateAccount) {
     birth: data.birth,
     age: data.age,
     sex: data.sex,
-    registere_at: data.registered_at
   };
 
   try {
-    const response = await axios.post(`${serverUrl}/api/accounts`, { account });
+    const response = await axios.post(`${serverUrl}/api/accounts`, { ...account });
+    console.debug({ response })
     return response.data;
   } catch (error: any) {
+    console.debug({ error })
     console.error("Error creating account:", error.message);
     // Handle the error (e.g., show a user-friendly message)
   }

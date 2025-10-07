@@ -1,26 +1,37 @@
 export type AccountType = {
-    fullName: string,
-    status: string,
-    sex: string,
-    age: number,
-    birth: Date,
-    last_entry: Date,
-    last_payment: Date,
-    _id: string,
+    id: string;
+    birth: Date;
+    registered_at: Date;
+    age: number;
+    name: string;
+    sex: Sex;
+    status: Status;
+    payments: Payment[];
+    entries: Entry[];
+}
+
+export type Payment = {
+    id: string
+    registered_at: Date
+    accountId: string
+    account: AccountType;
+}
+
+export type Entry = {
+    id: string
+    registered_at: Date
+    accountId: string
+    account: AccountType;
 }
 
 export type GetAllResponseType = {
     accounts: AccountType[],
-    nextPage: number | null,
-    previousPage: number | null,
     total: 0,
-    currentPage: number,
-    pageSize: number
 }
 
 export enum Sex {
-  MALE = 'male',
-  FEMALE = 'female',
+    MALE = 'male',
+    FEMALE = 'female',
 }
 
 export enum Status {
@@ -35,8 +46,6 @@ export type CreateAccount = {
     birth: Date
     age: number
     sex: Sex
-    registered_at: Date
-
 }
 
 

@@ -1,20 +1,24 @@
 'use client';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {  Search } from "lucide-react"
-import {  useEffect, useState } from "react"
+import { Loader2, Search, UserRound } from "lucide-react"
+import { useEffect, useState } from "react"
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 import React from "react"
 import { Calendar } from "./ui/calendar"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 import { useForm } from "react-hook-form";
-import { z } from 'zod';
+import { iso, z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel } from "./ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import { CreateAccount, Sex } from "@/lib/types";
 import { createAccount } from "@/lib/actions/account.actions";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { AlertDialogFooter, AlertDialogHeader } from "./ui/alert-dialog";
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogOverlay, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
 
 const formSchema = z.object({
   name: z
@@ -46,8 +50,12 @@ const calculateAge = (birthDate: Date): number => {
 };
 
 export const FilterBar: React.FC<FilterBarProps> = ({ searchParam, setSearchParam }) => {
+  // TODO: search accounts 
+
   const defaultDate = new Date();
   const [date, setDate] = useState<Date | undefined>(defaultDate);
+  const { mutate, isPending, isError, isSuccess } = useMutation({ mutationFn: createAccount });
+  const [isOpen, setOpen] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -58,33 +66,30 @@ export const FilterBar: React.FC<FilterBarProps> = ({ searchParam, setSearchPara
     },
   });
 
-  const { handleSubmit, control, setValue, formState, watch, reset } = form; // Destructure all form methods
+  const { handleSubmit, control, setValue, formState, watch, reset } = form;
   // Watch for changes in birthdate and calculate age
   const birthDate = watch("birth");
   useEffect(() => {
     if (birthDate) {
       const calculatedAge = calculateAge(birthDate);
-      setValue("age", calculatedAge, { shouldValidate: false }); // Don't trigger validation when setting age
-    }
+      setValue("age", calculatedAge, { shouldValidate: false });
+  }
   }, [birthDate, setValue]);
 
 
   const onSubmit = async (values: FormValues) => {
-    try {
-      // Include registered_at during account creation
-      const accountData: CreateAccount = {
-        ...values,
-        age: calculateAge(values.birth),
-        registered_at: defaultDate,
-      };
-
-      await createAccount(accountData);
-      console.log("Account created successfully!", accountData);
-      reset(); // Reset the form
-
-    } catch (error) {
-      console.error("Error creating account:", error);
-    }
+    mutate({
+      ...values, age: calculateAge(values.birth),
+    }, {
+      onSuccess: (data) => {
+        console.log(data)
+        setOpen(false)
+       // toast('Hello', {success: {message: ''}})
+      },
+      onError: (error) => {
+        //toast("Failed", {type: 'error'})
+      }
+    })
   };
 
   const onSearch = (search: string) => {
@@ -99,7 +104,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({ searchParam, setSearchPara
         <div className="font-sans font-bold text-3xl">
           Subscribed Accounts
         </div>
-
         <div className="flex max-w-sm items-center gap-2">
           <div className="flex flex-row gap-2 rounded-md bg-white items-center border border-gray-100 shadow-sm pr-2">
             <Input
@@ -112,112 +116,124 @@ export const FilterBar: React.FC<FilterBarProps> = ({ searchParam, setSearchPara
             <Search color="black" width={20} height={20} />
           </div>
 
-          <Sheet>
-            <SheetTrigger>
+          <AlertDialog onOpenChange={() => setOpen(!isOpen)} open={isOpen}>
+            <AlertDialogTrigger>
               <Button>Add Account</Button>
-            </SheetTrigger>
-            <SheetContent className="p-4">
+            </AlertDialogTrigger>
+         <AlertDialogOverlay>
+            <AlertDialogContent className="p-6 space-y-4">
               <Form {...form}>
                 <form onSubmit={handleSubmit(onSubmit)} >
-                  <SheetHeader>
-                    <SheetTitle className="text-xl">Create Account</SheetTitle>
-                    <SheetDescription>
+                  <AlertDialogHeader className="space-y-2 mb-5 items-center flex">
+                    <UserRound /> 
+                    <AlertDialogTitle className="text-xl">Create Account</AlertDialogTitle>
+                    <AlertDialogDescription>
                       Provide all information needed below to create a new account.
-                    </SheetDescription>
-                  </SheetHeader>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
 
                   <div className="grid flex-1 auto-rows-min gap-6 px-4">
-                    <FormField
-                      control={control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Name</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="User Name"
-                              className="border-black"
-                              {...field}
-                            />
-                          </FormControl>
-                          <p className="text-red-500 text-sm">{formState.errors.name?.message}</p>
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={control}
-                      name="birth"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Date of birth</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant="outline"
-                                className={cn(
-                                  "w-full px-4 justify-between font-normal",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? field.value.toLocaleDateString() : "Select date"}
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto overflow-hidden p-0" align="start">
-                              <Calendar
-                                mode="single"
-                                selected={field.value}
-                                captionLayout="dropdown"
-                                onSelect={(selectedDate) => {
-                                  field.onChange(selectedDate); // Update form value through react-hook-form
-                                  setDate(selectedDate); // Keep local state in sync for display
-                                }}
-                                disabled={(date) => date > new Date()}
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          <p className="text-red-500 text-sm">{formState.errors.birth?.message}</p>
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={control}
-                      name="sex"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Sex</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <div className="grid gap-3">
+                      <FormField
+                        control={control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Name</FormLabel>
                             <FormControl>
-                              <SelectTrigger className="w-full border-black px-4">
-                                <SelectValue placeholder="Select a sex" />
-                              </SelectTrigger>
+                              <Input
+                                placeholder="User Name"
+                                className="border-black"
+                                {...field}
+                              />
                             </FormControl>
-                            <SelectContent>
-                              <SelectGroup>
-                                <SelectItem value={Sex.MALE}>Male</SelectItem>
-                                <SelectItem value={Sex.FEMALE}>Female</SelectItem>
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                          <p className="text-red-500 text-sm">{formState.errors.sex?.message}</p>
-                        </FormItem>
-                      )}
-                    />
+                            <p className="text-red-500 text-sm">{formState.errors.name?.message}</p>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="grid gap-3">
+                      <FormField
+                        control={control}
+                        name="birth"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Date of birth</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  className={cn(
+                                    "w-full px-4 justify-between font-normal",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value ? field.value.toLocaleDateString() : "Select date"}
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+                                <Calendar
+                                  mode="single"
+                                  selected={field.value}
+                                  captionLayout="dropdown"
+                                  onSelect={(selectedDate) => {
+                                    field.onChange(selectedDate); // Update form value through react-hook-form
+                                    setDate(selectedDate); // Keep local state in sync for display
+                                  }}
+                                  disabled={(date) => date > new Date()}
+                                />
+                              </PopoverContent>
+                            </Popover>
+                            <p className="text-red-500 text-sm">{formState.errors.birth?.message}</p>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="grid gap-3">
+                      <FormField
+                        control={control}
+                        name="sex"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Sex</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="w-full border-black px-4">
+                                  <SelectValue placeholder="Select a sex" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectGroup>
+                                  <SelectItem value={Sex.MALE}>Male</SelectItem>
+                                  <SelectItem value={Sex.FEMALE}>Female</SelectItem>
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                            <p className="text-red-500 text-sm">{formState.errors.sex?.message}</p>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
 
-                  <SheetFooter>
-                    <Button type="submit">Create Account</Button>
-                    <SheetClose asChild>
+                  <AlertDialogFooter className="py-6">
+                    <Button type="submit" className="disabled:bg-opacity-90" disabled={isPending}>
+                      {isPending && <Loader2 className="animate-spin" />}
+                      Create Account
+                    </Button>
+                    <AlertDialogCancel asChild>
                       <Button variant="outline">Cancel</Button>
-                    </SheetClose>
-                  </SheetFooter>
+                    </AlertDialogCancel>
+                  </AlertDialogFooter>
                 </form>
               </Form>
-            </SheetContent>
-          </Sheet>
+            </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
         </div>
       </div>
     </section>
   );
 }
+
