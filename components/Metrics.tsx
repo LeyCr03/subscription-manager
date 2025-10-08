@@ -16,6 +16,8 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "./ui/chart";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import { Notifications } from "./Notifications";
 
+//  TODO: GET charts
+//get notifications
 
 export function Metrics() {
   const [activeChart, setActiveChart] =

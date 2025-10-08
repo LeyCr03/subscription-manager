@@ -12,6 +12,11 @@ import {
 import { cardData } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
+//get total revenue
+//get new customers
+//get active accounts
+//total entries
+
 
 export function SectionCards() {
   return (

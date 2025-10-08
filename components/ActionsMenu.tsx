@@ -14,6 +14,7 @@ import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
 
 export function ActionMenu({ account }: { account: AccountType }) {
+
     const clickOnEdit = () => {
     };
 
@@ -29,29 +30,29 @@ export function ActionMenu({ account }: { account: AccountType }) {
 
 
     return (
-        <Sheet>
-            <SheetTrigger asChild>
+        <AlertDialog>
+            <AlertDialogTrigger asChild>
                 <EllipsisVertical />
-            </SheetTrigger>
-            <SheetContent className="p-4">
-                <SheetHeader >
-                    <SheetTitle className="text-2xl">Account Details</SheetTitle>
-                    <SheetDescription>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="p-4">
+                <AlertDialogHeader className="items-center">
+                    <AlertDialogTitle className="text-2xl">Account Details</AlertDialogTitle>
+                    <AlertDialogDescription>
                         See all your profile information here and feel free to update it.
-                    </SheetDescription>
-                </SheetHeader>
-                <div className="grid flex-1 auto-rows-min gap-6 px-4">
-
-                    <div className="flex justify-between gap-3">
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="grid flex-1 auto-rows-min gap-6 px-4 py-2">
+                    <div className="flex justify-center gap-4">
                         <Badge
-                            variant="outline"
-                            className={cn(
-                                account.status === Status.ACTIVE ? "bg-green-300 border-green-300" : "bg-red-300 border-red-300"
-                            )}
+                            variant={account.status === Status.ACTIVE ? 'success' : 'destructive'}
                         >
                             {account.status}</Badge>
-                        <Badge>Frequency</Badge>
-                        <Badge>Revenue</Badge>
+                        <Badge
+                            variant={'secondary'}
+                        >Frequency</Badge>
+                        <Badge variant={account.status === Status.ACTIVE ? 'success' : 'destructive'}>
+
+                            Revenue</Badge>
                     </div>
 
                     <div className="grid gap-3">
@@ -63,36 +64,37 @@ export function ActionMenu({ account }: { account: AccountType }) {
 
                     </div>
 
-                    <div className="flex justify-between gap-3">
-                        <div className="grid gap-3">
+                    <div className="flex-1 flex-row flex gap-4">
+                        <div className="grid gap-3 flex-1">
                             <Label htmlFor="date" className="px-1">
                                 Birth Date
                             </Label>
-                            <Label className="w-full h-10 border rounded-md px-2 text-gray-800">{account.birth.toString()}</Label>
-                        </div>
-
-                        <div className="grid gap-3">
-                            <Label htmlFor="date" className="px-1">
-                                Registration Date
-                            </Label>
-                            <Label className="w-full h-10 border rounded-md px-2 text-gray-800">{account.registered_at.toString()}</Label>
-                        </div>
-                    </div>
-                    <div className="flex justify-between gap-3">
-                        <div className="grid gap-3">
-                            <Label className="px-1">Sex</Label>
-                            <Label className="w-full h-10 border rounded-md px-2 text-gray-800">{account.sex}</Label>
-                        </div>
-                        <div className="grid gap-3">
+                            <Label className="w-full h-10 border rounded-md px-2 text-gray-800">{account.birth.toString().substring(0, 10)}</Label>
+                        </div><div className="grid gap-3 w-20">
                             <Label className="px-1">Age</Label>
                             <Label className="w-full h-10 border rounded-md px-2 text-gray-800">{account.age}</Label>
                         </div>
 
                     </div>
+                    <div className="flex-1 flex-row flex gap-4">
+                        <div className="grid gap-3 flex-1">
+                            <Label htmlFor="date" className="px-1">
+                                Registration Date
+                            </Label>
+                            <Label className="w-full h-10 border rounded-md px-2 text-gray-800">{account.registered_at.toString().substring(0, 10)}</Label>
+                        </div>
+
+                        <div className="grid gap-3 w-20">
+                            <Label className="px-1">Sex</Label>
+                            <Label className="w-full h-10 border rounded-md px-2 text-gray-800">{account.sex}</Label>
+                        </div>
+
+
+                    </div>
                     <div className="grid gap-3">
 
                         <Label htmlFor="entries" className="px-1">
-                            Entries
+                            Entries & Payments
                         </Label>
                         <Popover >
                             <PopoverTrigger asChild>
@@ -101,7 +103,7 @@ export function ActionMenu({ account }: { account: AccountType }) {
                                     id="date"
                                     className="w-full px-4 justify-between font-normal"
                                 >
-                                    {account.registered_at.toString()}
+                                    {account.registered_at.toString().substring(0,10)}
                                     <ChevronDownIcon />
                                 </Button>
                             </PopoverTrigger>
@@ -120,7 +122,7 @@ export function ActionMenu({ account }: { account: AccountType }) {
                     </div>
                 </div>
 
-                <SheetFooter>
+                <AlertDialogFooter className="px-4 py-3">
                     <Button type="submit">Save changes</Button>
                     <AlertDialog>
                         <AlertDialogTrigger>
@@ -148,13 +150,13 @@ export function ActionMenu({ account }: { account: AccountType }) {
                         </AlertDialogContent>
                     </AlertDialog>
 
-                    <SheetClose asChild>
+                    <AlertDialogCancel asChild>
                         <Button variant="outline">Close</Button>
-                    </SheetClose>
-                </SheetFooter>
+                    </AlertDialogCancel>
+                </AlertDialogFooter>
 
 
-            </SheetContent>
-        </Sheet>
+            </AlertDialogContent>
+        </AlertDialog>
     )
 }

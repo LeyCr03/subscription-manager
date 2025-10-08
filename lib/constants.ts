@@ -6,7 +6,7 @@ import { AccountType } from "./types";
 
 export const accounts = [
   {
-    fullName: "John Doe",
+    name: "John Doe",
     status: "Active",
     sex: "Male",
     age: 30,
@@ -269,7 +269,7 @@ interface NotificationInfo {
 export const notificationData: NotificationInfo[] = [
   {
     title: "Suspension Alert",
-    account: accounts[1], // Assuming accounts[1] is a valid account
+     // Assuming accounts[1] is a valid account
     icon: CircleAlert,
     iconType: "suspension",
     subtext: "Account about to be suspended",
@@ -283,7 +283,7 @@ export const notificationData: NotificationInfo[] = [
   },
   {
     title: "Suspension Alert",
-    account: accounts[2], // Added another suspension alert
+   // Added another suspension alert
     icon: CircleAlert,
     iconType: "suspension",
     subtext: "Account 3 is overdue on payments",

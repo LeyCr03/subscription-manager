@@ -9,7 +9,7 @@ export function Notifications() {
           <CardHeader>
             <CardDescription>{notification.title}</CardDescription>
             <CardTitle className="text-md font-sand">
-              {notification.account ? notification.account.fullName : notification.period}
+              {notification.account ? notification.account.name : notification.period}
             </CardTitle>
             <CardAction>
              
