@@ -20,6 +20,7 @@ import { useGetAccounts } from "@/lib/hooks/useGetAccounts";
 import CreatePayment from "./dialogs/CreatePaymentDialog";
 import CreateEntry from "./dialogs/CreateEntryDialog";
 import LastPayment from "./lastPayment";
+import LastEntry from "./lastEntry";
 
 
 export const MainTable = () => {
@@ -58,7 +59,7 @@ export const MainTable = () => {
   return (
     <div>
       <SearchBar searchParam={searchParam} setSearchParam={setSearchParam} />
-      <div className="p-4 border border-gray-100 rounded-md shadow-sm">
+      <div className="p-4 border border-none rounded-md shadow-sm">
         <Table className="p-5">
           <TableHeader>
             <TableRow className="border-gray-300">
@@ -86,7 +87,9 @@ export const MainTable = () => {
                 <TableCell>
                   <LastPayment accountId={account.id}/>
                 </TableCell>
-                <TableCell>{account.registered_at.toString().substring(0,10)}</TableCell>
+                <TableCell>
+                  <LastEntry accountId={account.id}/>
+                </TableCell>
                 <TableCell className="flex justify-end  h-20 items-center pr-5">
                   <ActionMenu account={account} />
                   <CreatePayment accountId={account.id} name={account.name}/>
@@ -94,7 +97,7 @@ export const MainTable = () => {
               </TableRow>
             ))}
           </TableBody>
-          <TableFooter className="bg-white" >
+          <TableFooter className="" >
             <Pagination className="p-3 mt-3">
               <PaginationContent>
                 <PaginationPrevious

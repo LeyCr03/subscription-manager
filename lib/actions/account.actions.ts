@@ -46,7 +46,7 @@ export async function getLasPayment(accountId: string){
     const response = await axios.get(
       `${serverUrl}/api/accounts/last/payment/${accountId}`
     )
-    return response.data
+    return response.data || null
   } catch (error: any) {
     console.debug({ error })
     console.error("Error fetching last payment:", error.message);

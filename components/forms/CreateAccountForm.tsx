@@ -86,7 +86,7 @@ const defaultDate = new Date();
     return (
         <AlertDialog onOpenChange={() => setOpen(!isOpen)} open={isOpen}>
             <AlertDialogTrigger>
-              <Button>Add Account</Button>
+              <Button variant={'default'}>Add Account</Button>
             </AlertDialogTrigger>
          <AlertDialogOverlay>
             <AlertDialogContent className="p-6 space-y-4">

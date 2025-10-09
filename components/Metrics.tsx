@@ -30,7 +30,6 @@ export function Metrics() {
     }),
     []
   )
-
   return (
     <main>
 

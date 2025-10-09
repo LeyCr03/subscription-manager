@@ -27,7 +27,7 @@ export const SearchBar: React.FC<FilterBarProps> = ({ searchParam, setSearchPara
           Subscribed Accounts
         </div>
         <div className="flex max-w-sm items-center gap-2">
-          <div className="flex flex-row gap-2 rounded-md bg-white items-center border border-gray-100 shadow-sm pr-2">
+          <div className="flex flex-row gap-2 rounded-md  items-center border border-none shadow-sm pr-2">
             <Input
               onChange={(e) => onSearch(e.target.value)}
               value={searchParam}

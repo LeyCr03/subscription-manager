@@ -42,10 +42,30 @@ export enum Status {
 export type AgeRange = '18-25' | '25-35' | '35-45' | '45-70';
 
 export type CreateAccount = {
-    name: string;
+    name: string
     birth: Date
     age: number
     sex: Sex
+}
+
+export type CreateUserAccount ={
+    name: string
+    password: string
+    profileImage?: string
+    email: string
+}
+
+export type LogIn = {
+    email: string
+    password: string
+}
+export interface DecodedRequest {
+    user: {
+        _id: string,
+        email: string,
+        password: string,
+        refreshToken: string
+    }
 }
 
 

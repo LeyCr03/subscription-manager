@@ -5,7 +5,6 @@ import { AccountType, Status } from "@/lib/types";
 import { Button } from "./ui/button";
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogFooter } from "./ui/alert-dialog";
 import { AlertDialogHeader } from "./ui/alert-dialog";
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
@@ -91,35 +90,45 @@ export function ActionMenu({ account }: { account: AccountType }) {
 
 
                     </div>
-                    <div className="grid gap-3">
+                    <div className="flex-1 flex-row flex gap-4">
+                        <div className="grid gap-3 flex-1">
 
-                        <Label htmlFor="entries" className="px-1">
-                            Entries & Payments
-                        </Label>
-                        <Popover >
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    id="date"
-                                    className="w-full px-4 justify-between font-normal"
-                                >
-                                    {account.registered_at.toString().substring(0,10)}
-                                    <ChevronDownIcon />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto overflow-hidden p-0" align="end">
-                                <Calendar
-                                    mode="single"
-                                    selected={account.registered_at}
-                                    captionLayout="dropdown"
-                                    onSelect={() => { }}
-                                    disabled={(date) =>
-                                        date > new Date()
-                                    }
-                                />
-                            </PopoverContent>
-                        </Popover>
+                            <Label htmlFor="entries" className="px-1">
+                                Entries & Payment
+                            </Label>
+                            <Popover >
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        id="date"
+                                        className="w-full px-4 justify-between font-normal"
+                                    >
+                                        {account.registered_at.toString().substring(0, 10)}
+                                        <ChevronDownIcon />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto overflow-hidden p-0" align="end">
+                                    <Calendar
+                                        mode="single"
+                                        selected={account.registered_at}
+                                        captionLayout="dropdown"
+                                        onSelect={() => { }}
+                                        disabled={(date) =>
+                                            date > new Date()
+                                        }
+                                    />
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+                        <div className="grid gap-3 w-20">
+                            <Label className="px-1">Pay Days</Label>
+                           <Badge className="mx-2" variant={account.status === Status.ACTIVE ? 'success' : 'destructive'}>
+                            Days 
+                        </Badge> 
+                        </div>
+                        
                     </div>
+
                 </div>
 
                 <AlertDialogFooter className="px-4 py-3">
