@@ -2,6 +2,26 @@ import { ChartConfig } from "@/components/ui/chart";
 import { ArrowDown, CircleAlert, TrendingDown, TrendingUp } from "lucide-react";
 import { AccountType } from "./types";
 
+export const routes = {
+    BROWSE: {
+        url: '/network/browse',
+        title: "Browse polls",
+    },
+    TRENDING: {
+        url: '/network/trending',
+        title: 'Trending polls'
+    },
+    TOPICS: {
+        url: '/network/topics',
+        title: 'Topics'
+    },
+    AUTH: {
+        url: '/auth',
+        title: 'Auth'
+    }
+
+}
+
 // ------TABLE SECTION
 
 export const accounts = [
