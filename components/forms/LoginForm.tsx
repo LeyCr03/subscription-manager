@@ -10,10 +10,12 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import z from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form"
-import { logIn } from "@/lib/actions/auth.actions"
 import Link from "next/link"
+import { useFormStatus } from "react-dom"
+import { useAuth } from "@/context"
+import { useRouter } from "next/navigation"
 
-
+//TODO: fix here
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z.string()
@@ -28,11 +30,21 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;  // Define the form values type
 
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" aria-disabled={pending}>
+      {pending ? "Please wait..." : "Login"}
+    </Button>
+  );
+}
 
 export function LoginForm() {
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({ mutationFn: logIn });
-  const [isOpen, setOpen] = useState(false);
+  const { login } = useAuth();
+  const router = useRouter();
+
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -42,23 +54,16 @@ export function LoginForm() {
     },
   });
 
-  const { handleSubmit, control, setValue, formState, watch, reset } = form;
-
-
-
-  const onSubmit = async (values: FormValues) => {
-    mutate({
-      ...values
-    }, {
-      onSuccess: (data) => {
-        console.log(data)
-        setOpen(false)
-      },
-      onError: (error) => {
-        //toast("Failed", {type: 'error'})
+  const { control, handleSubmit, formState } = form;
+  
+   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+      try {
+        await login(values);
+        router.push('/dashboard'); // Redirect on success
+      } catch (error: any) {
+        throw new Error('Login failed');
       }
-    })
-  };
+    };
 
   return (
     <Form {...form}>
@@ -117,16 +122,14 @@ export function LoginForm() {
               )}
             />
           </div>
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
+          <SubmitButton/>
         </div>
         <div className="text-center text-sm">
           Don&apos;t have an account?{" "}
-          <Link href="/register" legacyBehavior>
-            <a className="underline underline-offset-4">
+          <Link href="/register">
+            <span className="underline underline-offset-4 cursor-pointer">
               Sign up
-            </a>
+            </span>
           </Link>
         </div>
       </form>

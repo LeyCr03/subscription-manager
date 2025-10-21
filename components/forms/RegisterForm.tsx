@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form"
 import z from "zod"
-import { useMutation } from "@tanstack/react-query"
-import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { createUserAccount } from "@/lib/actions/auth.actions"
 import { Loader2, UserCircle2Icon } from "lucide-react"
+import Link from "next/link"
+import { useFormStatus } from "react-dom"
+import { useAuth } from "@/context"
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
   name: z
@@ -27,13 +28,24 @@ const formSchema = z.object({
     }),
 });
 
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" aria-disabled={pending}>
+      {pending ? "Please wait..." : "Register"}
+    </Button>
+  );
+}
+
+
 type FormValues = z.infer<typeof formSchema>;  // Define the form values type
 
 export function RegisterForm() {
 
-  const { mutate, isPending, isError, isSuccess } = useMutation({ mutationFn: createUserAccount });
-  const [isOpen, setOpen] = useState(false);
-
+  const { register } = useAuth();
+  const router = useRouter();
+  
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -43,22 +55,15 @@ export function RegisterForm() {
     },
   });
 
-  const { handleSubmit, control, setValue, formState, watch, reset } = form;
+  const { control, handleSubmit, formState } = form;
 
-
-
-  const onSubmit = async (values: FormValues) => {
-    mutate({
-      ...values
-    }, {
-      onSuccess: (data) => {
-        console.log(data)
-        setOpen(false)
-      },
-      onError: (error) => {
-        //toast("Failed", {type: 'error'})
-      }
-    })
+ const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await register(values);
+      router.push('/'); // Redirect on success
+    } catch (error: any) {
+      throw new Error('Registration failed');
+    }
   };
 
   return (
@@ -128,10 +133,15 @@ export function RegisterForm() {
               )}
             />
           </div>
-          <Button type="submit" className="w-full my-5" disabled={isPending}>
-            {isPending && <Loader2 className="animate-spin" />}
-            Register
-          </Button>
+          <div className="text-center text-sm">
+            Already have an account?{" "}
+            <Link href="/login">
+              <span className="underline underline-offset-4 cursor-pointer">
+                Log in
+              </span>
+            </Link>
+          </div>
+          <SubmitButton />
         </div>
       </form>
     </Form>

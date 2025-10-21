@@ -1,35 +1,40 @@
-import { NextResponse } from 'next/server'
-import { NextRequest } from 'next/server'
-import { jwtVerify } from 'jose'
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { URL } from 'url';
 
-export async function middleware(request: NextRequest) {
-    const pathname = request.nextUrl.pathname;
+export function middleware(request: NextRequest) {
+  const accessToken = request.cookies.get('accessToken')?.value;
+  console.log({accessToken})
 
-    const authToken = request.cookies.get("auth_token");
+  const protectedRoutes = ['/dashboard']; // Example protected routes
 
-    if ((pathname === '/auth' || pathname === '/') && !authToken?.value) {
-        console.log('redirect2');
+  const authRoutes = ['/login', '/register'];
 
-        return NextResponse.next();
+ /* if (protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
+    if (!accessToken) {
+      return NextResponse.redirect(new URL('/login', request.url));
     }
+  }
 
-    if (!authToken?.value) {
-        console.log('redirect');
-        return NextResponse.redirect(new URL('/auth', request.url))
+  if (authRoutes.includes(request.nextUrl.pathname)) {
+    if (accessToken) {
+      return NextResponse.redirect(new URL('/', request.url)); // Redirect logged-in users away from auth pages
     }
+  }
 
-    try {
-        await jwtVerify(authToken.value, new TextEncoder().encode('a-string-secret-at-least-256-bits-long'))
-
-        if (pathname === '/auth' || pathname === '/') return NextResponse.redirect(new URL('/network/browse', request.url));
-    } catch {
-        return NextResponse.redirect(new URL('/auth', request.url))
-    }
-
-    return NextResponse.next();
+  return NextResponse.next();*/
 }
 
-// Filter routes that allow middleware
+// See "Matching Paths" below to learn more
 export const config = {
-    matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)']
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
 }

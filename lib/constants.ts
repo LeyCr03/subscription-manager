@@ -2,105 +2,10 @@ import { ChartConfig } from "@/components/ui/chart";
 import { ArrowDown, CircleAlert, TrendingDown, TrendingUp } from "lucide-react";
 import { AccountType } from "./types";
 
-export const routes = {
-    BROWSE: {
-        url: '/network/browse',
-        title: "Browse polls",
-    },
-    TRENDING: {
-        url: '/network/trending',
-        title: 'Trending polls'
-    },
-    TOPICS: {
-        url: '/network/topics',
-        title: 'Topics'
-    },
-    AUTH: {
-        url: '/auth',
-        title: 'Auth'
-    }
-
-}
 
 // ------TABLE SECTION
 
-export const accounts = [
-  {
-    name: "John Doe",
-    status: "Active",
-    sex: "Male",
-    age: 30,
-    last_payment: new Date(),
-    last_entry: new Date(),
-    _id: "001",
-    birth: new Date(),
-  },
-  {
-    fullName: "Jane Smith",
-    status: "Suspended",
-    sex: "Female",
-    age: 28,
-    last_payment: new Date(),
-    last_entry: new Date(),
-    _id: "002",
-    birth: new Date(),
 
-  },
-  {
-    fullName: "Michael Johnson",
-    status: "Active",
-    sex: "Male",
-    age: 45,
-    last_payment: new Date(),
-    last_entry: new Date(),
-    birth: new Date(),
-
-    _id: "003"
-  },
-  {
-    fullName: "Emily Davis",
-    status: "Active",
-    sex: "Female",
-    age: 34,
-    last_payment: new Date(),
-    last_entry: new Date(),
-    birth: new Date(),
-
-    _id: "004"
-  },
-  {
-    fullName: "William Brown",
-    status: "Suspended",
-    sex: "Male",
-    age: 50,
-    last_payment: new Date(),
-    last_entry: new Date(),
-    birth: new Date(),
-
-    _id: "005"
-  },
-  {
-    fullName: "Olivia Wilson",
-    status: "Active",
-    sex: "Female",
-    age: 22,
-    last_payment: new Date(),
-    last_entry: new Date(),
-    birth: new Date(),
-
-    _id: "006"
-  },
-  {
-    fullName: "James Taylor",
-    status: "Pending",
-    sex: "Male",
-    age: 38,
-    last_payment: new Date(),
-    last_entry: new Date(),
-    birth: new Date(),
-    _id: "007"
-  },
-];
 
 export const tableHeaders = [
   { key: 'entry', label: 'Entry', className: 'w-[100px]' },
@@ -222,57 +127,6 @@ export const chartConfig = {
     color: "var(--chart-1)",
   },
 } satisfies ChartConfig
-
-//----------- CARD SECTION
-
-interface CardInfo {
-  title: string;
-  value: string;
-  trendIcon: React.ComponentType<any> | null; // Allows null for no icon
-  trendPercentage: string;
-  trendText: string;
-  trendDirection: "up" | "down";
-  subtext: string;
-}
-
-export const cardData: CardInfo[] = [
-  {
-    title: "Total Revenue",
-    value: "$1,250.00",
-    trendIcon: TrendingUp,
-    trendPercentage: "+12.5%",
-    trendText: "Trending up this month",
-    trendDirection: "up",
-    subtext: "Visitors for the last 6 months",
-  },
-  {
-    title: "New Customers",
-    value: "1,234",
-    trendIcon: TrendingDown,
-    trendPercentage: "-20%",
-    trendText: "Down 20% this period",
-    trendDirection: "down",
-    subtext: "Acquisition needs attention",
-  },
-  {
-    title: "Active Accounts",
-    value: "45,678",
-    trendIcon: TrendingUp,
-    trendPercentage: "+12.5%",
-    trendText: "Strong user retention",
-    trendDirection: "up",
-    subtext: "Engagement exceed targets",
-  },
-  {
-    title: "Growth Rate",
-    value: "4.5%",
-    trendIcon: TrendingUp,
-    trendPercentage: "+4.5%",
-    trendText: "Steady performance increase",
-    trendDirection: "up",
-    subtext: "Meets growth projections",
-  },
-];
 
 
 //-------------NOTIFICATION

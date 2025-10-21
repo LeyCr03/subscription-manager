@@ -35,7 +35,7 @@ export default function CreateEntry({ accountId, name }: { accountId: string, na
                 }
             });
     };
-    
+
     const handleCheckboxChange = () => {
         setIsSelected(!isSelected);
     };
@@ -55,14 +55,14 @@ export default function CreateEntry({ accountId, name }: { accountId: string, na
                         <AlertDialogTitle className="text-2xl">Register Entry</AlertDialogTitle>
                         <AlertDialogDescription className="text-md">Set an entry for: <span className="font-bold">{name}</span></AlertDialogDescription>
                     </AlertDialogHeader>
-                    <Label className="flex text-4xl font-bold  text-gray-800 justify-center  rounded-xl h-50 w-full max-w-sm border border-dotted border-black">{currentDate.toLocaleDateString()}</Label>
+                    <Label className="flex text-4xl font-bold justify-center  rounded-xl h-50 w-full max-w-sm border border-dotted border-success">{currentDate.toLocaleDateString()}</Label>
                     <AlertDialogFooter className=" p-3">
-                        <AlertDialogAction>
-                            <Button onClick={() => (onSubmit(accountId))}>Submit</Button>
+                        <AlertDialogAction onClick={() => (onSubmit(accountId))}>
+                            Submit
                         </AlertDialogAction>
 
-                        <AlertDialogCancel asChild>
-                            <Button variant={"outline"}>  Cancel</Button>
+                        <AlertDialogCancel>
+                            Cancel
                         </AlertDialogCancel>
                     </AlertDialogFooter>
                 </div>

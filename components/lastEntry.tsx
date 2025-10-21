@@ -1,10 +1,12 @@
 import { useGetLastEntry } from "@/lib/hooks/useGetLastEntry"
 
 export default function LastEntry({accountId}: {accountId: string}){
-    const {data} = useGetLastEntry({accountId})
+    const {data, error} = useGetLastEntry({accountId})
+
+    if(error) return '-';
 
    const response = new Date(data)    
     return(
-        <div>{data? response.toISOString().substring(0,10): " "}</div>
+        <div>{data? response.toISOString().substring(0,10): "-"}</div>
     )
 }

@@ -9,9 +9,12 @@ import { useState, useEffect } from 'react';
 import { useTheme } from "next-themes"
 
 export default function Header() {
+
+    //TODO: get user data
+    //logout
+
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
-    //TODO fix dark mode
     useEffect(() => {
         setMounted(true);
     }, []);
@@ -28,7 +31,7 @@ export default function Header() {
 
 
     return (
-        <header className="flex py-5 items-center gap-2 border-b border-gray-200">
+        <header className="flex py-5 items-center gap-2 border-b">
             <div className="mb-1 flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
                 <UserDetails />
                 <Separator

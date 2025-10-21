@@ -10,6 +10,16 @@ export type AccountType = {
     entries: Entry[];
 }
 
+export type UserType = {
+    id: string;
+    email: string
+    image?: string | null
+    name: string
+    description: string 
+    password: string;
+    refreshTokenHash?: string | null;
+}
+
 export type Payment = {
     id: string
     registered_at: Date
@@ -68,4 +78,8 @@ export interface DecodedRequest {
     }
 }
 
+export type SuspensionResponse = {
+    suspensionRisk: boolean,
+    daysSinceLastPayment: number | null
+}
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CreateAccount, GetAllResponseType } from "../types";
+import { CreateAccount, GetAllResponseType, Status, SuspensionResponse } from "../types";
 
 const serverUrl = process.env.SERVER || "http://localhost:3001";
 console.log(serverUrl)
@@ -41,29 +41,29 @@ export async function createAccount(data: CreateAccount) {
   }
 }
 
-export async function getLasPayment(accountId: string){
-  try{
+export async function getLasPayment(accountId: string) {
+  try {
     const response = await axios.get(
       `${serverUrl}/api/accounts/last/payment/${accountId}`
     )
     return response.data || null
   } catch (error: any) {
     console.debug({ error })
-    console.error("Error fetching last payment:", error.message);
-    // Handle the error (e.g., show a user-friendly message)
+    throw new Error('Not found', error);
   }
 }
 
-export async function getLasEntry(accountId: string){
-  try{
+export async function getLasEntry(accountId: string) {
+  try {
     const response = await axios.get(
       `${serverUrl}/api/accounts/last/entry/${accountId}`
     )
+    console.log({ response })
     return response.data
   } catch (error: any) {
-    console.debug({ error })
-    console.error("Error fetching last entry:", error.message);
+
     // Handle the error (e.g., show a user-friendly message)
+    throw new Error('Not found', error);
   }
 }
 
@@ -76,3 +76,69 @@ export async function deleteAccount(id: string) {
     console.error("Error deleting account:", error.message);
   }
 }
+
+export async function getFrequency(id: string) {
+  try {
+    const response = await axios.get(
+      `${serverUrl}/api/accounts/frequency/${id}`
+    )
+    return response.data
+  } catch (error: any) {
+    console.debug({ error })
+    throw new Error('Not found', error);
+  }
+}
+
+export async function getRevenue(
+  id: string,
+  pricePerEntry: number,
+  subscriptionPrice: number) {
+  try {
+    const response = await axios.get(
+      `${serverUrl}/api/accounts/revenue/${id}?pricePerEntry=${pricePerEntry}&subscriptionPrice=${subscriptionPrice}`
+    )
+    return response.data
+  } catch (error: any) {
+    console.debug({ error })
+
+    throw new Error('Not found', error);
+  }
+}
+
+export async function getDaysSinceLastPayment(id: string): Promise<SuspensionResponse> {
+  try {
+    const response = await axios.get(
+      `${serverUrl}/api/accounts/suspension/status/${id}`
+    )
+    //  console.log({res: response.data})
+    return response.data
+  } catch (error: any) {
+    console.debug({ error })
+    console.error("Error fetching last entry:", error.message);
+    // Handle the error (e.g., show a user-friendly message)
+    return { suspensionRisk: false, daysSinceLastPayment: null }
+  }
+}
+
+export async function searchAccounts(
+  page: number,
+  limit: number,
+  search: string
+) : Promise<GetAllResponseType> {
+  try {
+    const response = await axios.get(
+      `${serverUrl}/api/accounts/filter/by?page=${page}&limit=${limit}&search=${search}`
+    )
+    //  console.log({res: response.data})
+    return response.data
+  } catch (error: any) {
+    console.debug({ error })
+     return {
+      accounts: [],
+      total: 0,
+    };
+  }
+}
+
+
+

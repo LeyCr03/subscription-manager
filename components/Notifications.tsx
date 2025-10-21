@@ -1,26 +1,31 @@
 import { notificationData } from "@/lib/constants";
 import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import { Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemTitle } from "./ui/item";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { ArrowRightCircleIcon, ArrowRightIcon } from "lucide-react";
 
 export function Notifications() {
   return (
-   <div className="flex flex-col gap-2">
+     <div className="flex flex-col gap-6">
       {notificationData.map((notification, index) => (
-        <Card key={index} className="w-full border-none">
-          <CardHeader>
-            <CardDescription>{notification.title}</CardDescription>
-            <CardTitle className="text-md font-sand">
-              {notification.account ? notification.account.name : notification.period}
-            </CardTitle>
-            <CardAction>
-             
-                {notification.icon ? <notification.icon size={40} color="#DD0303" /> : null}
-              
-            </CardAction>
-          </CardHeader>
-          <CardFooter className="flex-col items-start gap-1.5 text-sm">
-            <div className="text-muted-foreground">{notification.subtext}</div>
-          </CardFooter>
-        </Card>
+      <Item key={index}>
+        <ItemContent>
+          <ItemTitle>{notification.account ? notification.account.name : notification.period}</ItemTitle>
+          <ItemDescription className="text-destructive">
+            {notification.title}
+          </ItemDescription>
+        </ItemContent>
+        <ItemActions>
+          <Badge variant={'destructive'}>
+           <ArrowRightIcon size={30}/>
+          </Badge>
+        </ItemActions>
+        <ItemFooter>
+          <p>{notification.subtext}</p>
+        </ItemFooter>
+        
+      </Item>
       ))}
     </div>
   );

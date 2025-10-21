@@ -1,6 +1,6 @@
 
 import * as React from "react"
-import { ChevronDownIcon, EllipsisVertical, PenIcon } from "lucide-react"
+import { ChevronDownIcon, EllipsisVertical, PenIcon, UserCircle2 } from "lucide-react"
 import { AccountType, Status } from "@/lib/types";
 import { Button } from "./ui/button";
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogFooter } from "./ui/alert-dialog";
@@ -10,9 +10,16 @@ import { Input } from "./ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Calendar } from "./ui/calendar";
 import { Badge } from "./ui/badge";
-import { cn } from "@/lib/utils";
+import { useGetFrequency } from "@/lib/hooks/useGetFrequency";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import Revenue from "./revenue";
+import SuspensionStatus from "./suspension.status";
 
 export function ActionMenu({ account }: { account: AccountType }) {
+
+    const accountId = account.id;
+    const { data } = useGetFrequency({ accountId });
+
 
     const clickOnEdit = () => {
     };
@@ -20,9 +27,8 @@ export function ActionMenu({ account }: { account: AccountType }) {
     const clickOnDelete = () => {
     };
 
-    // get last entry
-    //get frequency
-    //get revenue
+    // get last entry 
+    //get days since last payment
     //get account entries since last payment
     // update account name
     //delete account
@@ -34,7 +40,9 @@ export function ActionMenu({ account }: { account: AccountType }) {
                 <EllipsisVertical />
             </AlertDialogTrigger>
             <AlertDialogContent className="p-4">
+
                 <AlertDialogHeader className="items-center">
+                    <UserCircle2 size={60} />
                     <AlertDialogTitle className="text-2xl">Account Details</AlertDialogTitle>
                     <AlertDialogDescription>
                         See all your profile information here and feel free to update it.
@@ -42,21 +50,40 @@ export function ActionMenu({ account }: { account: AccountType }) {
                 </AlertDialogHeader>
                 <div className="grid flex-1 auto-rows-min gap-6 px-4 py-2">
                     <div className="flex justify-center gap-4">
-                        <Badge
-                            variant={account.status === Status.ACTIVE ? 'success' : 'destructive'}
-                        >
-                            {account.status}</Badge>
-                        <Badge
-                            variant={'secondary'}
-                        >Frequency</Badge>
-                        <Badge variant={account.status === Status.ACTIVE ? 'success' : 'destructive'}>
-
-                            Revenue</Badge>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <Badge
+                                    variant={account.status === Status.ACTIVE ? 'success' : 'destructive'}
+                                >
+                                    {account.status}</Badge>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Status</p>
+                            </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <Badge
+                                    variant={data > 24 ? 'success' : 'destructive'}
+                                >{data}/30</Badge>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Frequency</p>
+                            </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <Revenue accountId={account.id} />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Revenue</p>
+                            </TooltipContent>
+                        </Tooltip>
                     </div>
 
                     <div className="grid gap-3">
                         <Label htmlFor="name">Name</Label>
-                        <div className="flex flex-row items-center pr-2 border rounded-md">
+                        <div className="flex flex-row items-center pr-2 border-none bg-secondary shadow-sm rounded-md">
                             <Input id="name" defaultValue={account.name} className="border-none rounded-r-none mr-2 shadow-none" />
                             <PenIcon size={20} />
                         </div>
@@ -68,10 +95,10 @@ export function ActionMenu({ account }: { account: AccountType }) {
                             <Label htmlFor="date" className="px-1">
                                 Birth Date
                             </Label>
-                            <Label className="w-full h-10 border rounded-md px-2 text-gray-800">{account.birth.toString().substring(0, 10)}</Label>
+                            <Label className="w-full h-10 border-none bg-secondary shadow-sm rounded-md px-2 ">{account.birth.toString().substring(0, 10)}</Label>
                         </div><div className="grid gap-3 w-20">
                             <Label className="px-1">Age</Label>
-                            <Label className="w-full h-10 border rounded-md px-2 text-gray-800">{account.age}</Label>
+                            <Label className="w-full h-10 border-none bg-secondary shadow-sm rounded-md px-2 ">{account.age}</Label>
                         </div>
 
                     </div>
@@ -80,12 +107,12 @@ export function ActionMenu({ account }: { account: AccountType }) {
                             <Label htmlFor="date" className="px-1">
                                 Registration Date
                             </Label>
-                            <Label className="w-full h-10 border rounded-md px-2 text-gray-800">{account.registered_at.toString().substring(0, 10)}</Label>
+                            <Label className="w-full h-10 border-none bg-secondary shadow-sm rounded-md px-2 ">{account.registered_at.toString().substring(0, 10)}</Label>
                         </div>
 
                         <div className="grid gap-3 w-20">
                             <Label className="px-1">Sex</Label>
-                            <Label className="w-full h-10 border rounded-md px-2 text-gray-800">{account.sex}</Label>
+                            <Label className="w-full h-10 border-none bg-secondary shadow-sm rounded-md px-2 ">{account.sex}</Label>
                         </div>
 
 
@@ -122,11 +149,9 @@ export function ActionMenu({ account }: { account: AccountType }) {
                         </div>
                         <div className="grid gap-3 w-20">
                             <Label className="px-1">Pay Days</Label>
-                           <Badge className="mx-2" variant={account.status === Status.ACTIVE ? 'success' : 'destructive'}>
-                            Days 
-                        </Badge> 
+                            <SuspensionStatus accountId={accountId}/>
                         </div>
-                        
+
                     </div>
 
                 </div>
@@ -134,21 +159,20 @@ export function ActionMenu({ account }: { account: AccountType }) {
                 <AlertDialogFooter className="px-4 py-3">
                     <Button type="submit">Save changes</Button>
                     <AlertDialog>
-                        <AlertDialogTrigger>
-                            <Button className="w-full">Delete Account</Button>
+                        <AlertDialogTrigger className="bg-primary text-secondary text-sm px-4 py-2 rounded-md">
+                            Delete Account
                         </AlertDialogTrigger>
-                        <AlertDialogContent>
-                            <AlertDialogHeader className="text-2xl">
+                        <AlertDialogContent className="grid-col gap-2">
+                            <AlertDialogHeader className="text-2xl font-sans text-bold text-destructive">
                                 Delete Account
                             </AlertDialogHeader>
-                            <AlertDialogTitle>
-                                Are you sure you want to delete this account? this action is irreversible.
+                            <AlertDialogTitle className="fornt-sans ">
+                                <span className="text-primary opacity-60"> Account:</span> {account.name}
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                                ID: {account.id} {account.name}
-
+                                Are you sure you want to delete this account? This action is irreversible.
                             </AlertDialogDescription>
-                            <AlertDialogFooter>
+                            <AlertDialogFooter className="pt-4">
                                 <AlertDialogAction>
                                     Delete
                                 </AlertDialogAction>
@@ -159,8 +183,8 @@ export function ActionMenu({ account }: { account: AccountType }) {
                         </AlertDialogContent>
                     </AlertDialog>
 
-                    <AlertDialogCancel asChild>
-                        <Button variant="outline">Close</Button>
+                    <AlertDialogCancel >
+                        Close
                     </AlertDialogCancel>
                 </AlertDialogFooter>
 

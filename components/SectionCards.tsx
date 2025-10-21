@@ -1,5 +1,3 @@
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
-
 import { Badge } from "@/components/ui/badge"
 import {
   Card,
@@ -9,8 +7,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { cardData } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { TrendingDown, TrendingUp } from "lucide-react";
+import { success } from "zod";
 
 //get total revenue
 //get new customers
@@ -18,37 +17,108 @@ import { cn } from "@/lib/utils";
 //total entries
 
 
+
+
 export function SectionCards() {
+const value = true
   return (
    <div className="grid grid-cols-4 gap-5 py-10">
-      {cardData.map((card, index) => (
-        <Card key={index} className="@container/card border-none">
+        <Card className="@container/card border-none">
           <CardHeader>
-            <CardDescription>{card.title}</CardDescription>
+            <CardDescription>Total Revenue</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {card.value}
+              value
             </CardTitle>
             <CardAction>
               <Badge
-                variant="outline"
-                className={cn(
-                  card.trendDirection === "up" ? "bg-green-400 text-white border-green-400" : "bg-red-500 text-white border-red-500"
-                )}
+                variant={
+                  'success'
+                }
               >
-                {card.trendIcon ? <card.trendIcon className="h-4 w-4 mr-1" /> : null}
-                {card.trendPercentage}
+                {value ? <TrendingUp className="h-4 w-4 mr-1"/> : <TrendingDown/> }
+                percent
               </Badge>
             </CardAction>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
             <div className="line-clamp-1 flex gap-2 font-medium">
-              {card.trendText}
-              {card.trendIcon ? <card.trendIcon className="size-4" /> : null}
+                {value ? <TrendingUp className="h-4 w-4 mr-1"/> : <TrendingDown/> }
             </div>
-            <div className="text-muted-foreground">{card.subtext}</div>
+            <div className="text-muted-foreground">Last month revenue</div>
           </CardFooter>
         </Card>
-      ))}
+        <Card className="@container/card border-none">
+          <CardHeader>
+            <CardDescription>New Customers</CardDescription>
+            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+              value
+            </CardTitle>
+            <CardAction>
+              <Badge
+                variant={
+                  'success'
+                }
+              >
+                {value ? <TrendingUp className="h-4 w-4 mr-1"/> : <TrendingDown/> }
+                percent
+              </Badge>
+            </CardAction>
+          </CardHeader>
+          <CardFooter className="flex-col items-start gap-1.5 text-sm">
+            <div className="line-clamp-1 flex gap-2 font-medium">
+                {value ? <TrendingUp className="h-4 w-4 mr-1"/> : <TrendingDown/> }
+            </div>
+            <div className="text-muted-foreground">Recently registered accounts</div>
+          </CardFooter>
+        </Card>
+        <Card className="@container/card border-none">
+          <CardHeader>
+            <CardDescription>All Active Accounts</CardDescription>
+            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+              value
+            </CardTitle>
+            <CardAction>
+              <Badge
+                variant={
+                  'success'
+                }
+              >
+                {value ? <TrendingUp className="h-4 w-4 mr-1"/> : <TrendingDown/> }
+                percent
+              </Badge>
+            </CardAction>
+          </CardHeader>
+          <CardFooter className="flex-col items-start gap-1.5 text-sm">
+            <div className="line-clamp-1 flex gap-2 font-medium">
+                {value ? <TrendingUp className="h-4 w-4 mr-1"/> : <TrendingDown/> }
+            </div>
+            <div className="text-muted-foreground">Engagement from customers</div>
+          </CardFooter>
+        </Card>
+        <Card className="@container/card border-none">
+          <CardHeader>
+            <CardDescription>Total Entries</CardDescription>
+            <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+              value
+            </CardTitle>
+            <CardAction>
+              <Badge
+                variant={
+                  'success'
+                }
+              >
+                {value ? <TrendingUp className="h-4 w-4 mr-1"/> : <TrendingDown/> }
+                percent
+              </Badge>
+            </CardAction>
+          </CardHeader>
+          <CardFooter className="flex-col items-start gap-1.5 text-sm">
+            <div className="line-clamp-1 flex gap-2 font-medium">
+                {value ? <TrendingUp className="h-4 w-4 mr-1"/> : <TrendingDown/> }
+            </div>
+            <div className="text-muted-foreground">All visits of the last 3 months</div>
+          </CardFooter>
+        </Card>
     </div>
   );
 }

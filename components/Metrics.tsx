@@ -285,7 +285,7 @@ export function Metrics() {
           </Tabs>
         </Card>
         <Card className="w-full max-w-md h-full max-h-[60vh] border-none shadow-none">
-          <CardTitle className="text-center text-2xl text-red-700 font-sans"> Notification Alerts</CardTitle>
+          <CardTitle className="text-center text-2xl font-sans"> Notification Alerts</CardTitle>
           <CardContent className="overflow-auto py-5">
             <Notifications/>
           </CardContent>
