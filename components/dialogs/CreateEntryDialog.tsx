@@ -1,10 +1,9 @@
 "use client"
 
 import { useMutation } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
 import { Checkbox } from "../ui/checkbox";
-import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { BookCheck } from "lucide-react";
 import { createEntry } from "@/lib/actions/entries.actions";
@@ -14,7 +13,6 @@ export default function CreateEntry({ accountId, name }: { accountId: string, na
     //TODO: has entered already
 
     const { mutate, isPending, isError, isSuccess } = useMutation({ mutationFn: createEntry });
-    const [isSelected, setIsSelected] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [hasBeenSelectedBefore, setHasBeenSelectedBefore] = useState(false);
     const currentDate = new Date();
@@ -28,7 +26,7 @@ export default function CreateEntry({ accountId, name }: { accountId: string, na
                     console.log(data)
                     setIsOpen(false)
                     // toast('Hello', {success: {message: ''}})
-                    setIsSelected(true)
+                    window.location.reload();
                 },
                 onError: (error) => {
                     //toast("Failed", {type: 'error'})
@@ -36,16 +34,10 @@ export default function CreateEntry({ accountId, name }: { accountId: string, na
             });
     };
 
-    const handleCheckboxChange = () => {
-        setIsSelected(!isSelected);
-    };
-
     return (
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
             <AlertDialogTrigger asChild>
                 <Checkbox
-                    checked={isSelected}
-                    disabled={isSelected && !isOpen} // Disable if selected and dialog is not open
                 />
             </AlertDialogTrigger>
             <AlertDialogContent className="p-4 ">

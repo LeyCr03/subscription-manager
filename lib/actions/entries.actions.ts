@@ -4,15 +4,14 @@ import { Entry } from "../types";
 const serverUrl = process.env.SERVER || "http://localhost:3001";
 console.log(serverUrl)
 
-export async function getEntriesAfterLastPayment( id: string
-): Promise<Entry[]> {
-  try {
+export async function getDatesAfterLastPayDay(id: string): Promise<Date[]>{
+    try {
     const response = await axios.get(
-      `${serverUrl}/api/accounts/entries/afterLastPayment/${id}`
+      `${serverUrl}/api/accounts/dates/after/payment/${id}`
     );
+    console.log(response.data);
     return response.data;
   } catch (error: any) {
-    console.error("Error fetching data:", error.message);
     return [];
   }
 }
@@ -37,5 +36,22 @@ export async function deleteEntry(id: string) {
     return response.data;
   } catch (error: any) {
     console.error("Error deleting entry:", error.message);
+  }
+}
+
+
+
+export async function totalEntries() {
+  
+ try {
+    const response = await axios.get(
+      `${serverUrl}/api/entries/tree/month`
+    )
+    console.log(response.data)
+    return response.data
+  } catch (error: any) {
+    console.debug({ error })
+
+    throw new Error('Not found', error);
   }
 }

@@ -38,3 +38,4 @@ export async function deleteAccount(id: string) {
     console.error("Error deleting account:", error.message);
   }
 }
+

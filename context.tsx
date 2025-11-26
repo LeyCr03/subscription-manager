@@ -1,168 +1,148 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import Cookies from 'js-cookie';
 import React from "react";
 import { CreateUserAccount, LogIn, UserType } from "./lib/types";
-import { createFetchWithAuth } from './lib/fetch';
+import { createFetchWithAuth } from "./lib/fetch"; // Adjust path as needed
 
-export interface AuthContext {
-
-  isAuthenticated: boolean;
-  login: (user: LogIn) => Promise<void>;
-  register: (user: CreateUserAccount) => Promise<void>;
-  logout: () => Promise<void>;
-  user: UserType | null;
-  refreshUser: () => Promise<void>;
-  getUser: () => Promise<UserType | null>;
+export interface AuthContextType {
+    isAuthenticated: boolean;
+    login: (user: LogIn) => Promise<void>;
+    register: (user: CreateUserAccount) => Promise<void>;
+    logout: () => Promise<void>;
+    user: UserType | null;
+    refreshUser: () => Promise<void>;
+    getUser: () => Promise<UserType | null>;
 }
-const AuthContext = createContext<AuthContext | null>(null);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [authState, setAuthState] = useState<{
-    isAuthenticated: boolean,
-    user: UserType | null,
-    isLoading: boolean
-  }>({
-    isAuthenticated: false,
-    user: null,
-    isLoading: true,
-  });
+    const [authState, setAuthState] = useState<{
+        isAuthenticated: boolean,
+        user: UserType | null,
+        isLoading: boolean
+    }>({
+        isAuthenticated: false,
+        user: null,
+        isLoading: true,
+    });
 
-  const setUser = (user: UserType | null) => setAuthState(prev => ({ ...prev, user }));
-  const setIsAuthenticated = (isAuthenticated: boolean) => setAuthState(prev => ({ ...prev, isAuthenticated }));
+    const setUser = (user: UserType | null) => setAuthState(prev => ({ ...prev, user }));
+    const setIsAuthenticated = (isAuthenticated: boolean) => setAuthState(prev => ({ ...prev, isAuthenticated }));
+    const setIsLoading = (isLoading: boolean) => setAuthState(prev => ({ ...prev, isLoading }));
 
-  async function getUser(): Promise<UserType | null> {
-    const url = `/api/users`; // Corrected URL
+    const { fetchWithAuthorization } = useMemo(() => createFetchWithAuth(), []);
 
-    const { fetchWithAuthorization } = createFetchWithAuth();  // Get the functions
+    const logout = useCallback(async () => {
+        setUser(null);
+        setIsAuthenticated(false);
+        Cookies.remove('accessToken');
+        Cookies.remove('refreshToken');
+    }, []);
 
-    try {
-      const response = await fetchWithAuthorization(url); // Use fetchWithAuthorization
+    const getUser = useCallback(async (): Promise<UserType | null> => {
+        return await fetchWithAuthorization(`/api/users`);
+    }, [fetchWithAuthorization]); 
 
-      const responseUser: UserType = await response.json();
-      return responseUser;
-    } catch (error) {
-      console.error(error);
-      logout(); // Terminate session
-      return null;
-    }
-  }
-
-
-  const logout = React.useCallback(async () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    Cookies.remove('accessToken');
-    Cookies.remove('refreshToken');
-  }, []);
-
-  async function refreshUser() {
-    const user = await getUser();
-    console.log({ user });
-    setUser(user);
-    setIsAuthenticated(!!user);
-  }
-
-  const login = React.useCallback(async ({ password, email }: LogIn) => {
-    const url = 'http://localhost:3001/api/auth/login';
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ password, email }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error Login');
-      }
-
-      const { accessToken, refreshToken } = await response.json();
-      Cookies.set('accessToken', accessToken, { expires: 1 });
-      Cookies.set('refreshToken', refreshToken, { expires: 7 });
-      await refreshUser()
-    } catch (error) {
-      console.error('Error Login User:', error);
-      throw error;
-    }
-  }, []);
-
-  const register = React.useCallback(async ({ name, password, email }: CreateUserAccount) => {
-    const url = 'http://localhost:3001/api/auth/register';
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, password, email }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error creating user');
-      }
-
-      const { accessToken, refreshToken } = await response.json();
-      Cookies.set('accessToken', accessToken, { expires: 1 });
-      Cookies.set('refreshToken', refreshToken, { expires: 7 });
-      await refreshUser()
-    } catch (error) {
-      console.error('Error creating user:', error);
-      throw error;
-    }
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const token = Cookies.get('accessToken');
-      if (token) {
-        const fetchedUser = await getUser();
-        if (fetchedUser) {
-          setAuthState({ user: fetchedUser, isAuthenticated: true, isLoading: false });
-        } else {
-          await logout();
+    const refreshUser = useCallback(async () => {
+        try {
+            const user = await getUser();
+            console.log("Fetched user for refresh:", user);
+            setUser(user);
+            setIsAuthenticated(!!user);
+        } catch (error) {
+            console.error("Error refreshing user data:", error);
+            await logout(); 
         }
-      } else {
-        await logout();
-      }
-    } catch (error) {
-      console.error("Error checking authentication:", error);
-      await logout();
-    } finally {
-      setAuthState(prev => ({ ...prev, isLoading: false }));
+    }, [getUser, logout, setUser, setIsAuthenticated]);
+
+    const login = useCallback(async ({ password, email }: LogIn) => {
+        try {
+            const { accessToken, refreshToken } = await fetchWithAuthorization(`/api/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password, email }),
+            });
+            Cookies.set('accessToken', accessToken, { expires: 1 / 48 }); 
+            Cookies.set('refreshToken', refreshToken, { expires: 7 });
+            await refreshUser();
+        } catch (error) {
+            console.error('Error Login User:', error);
+            await logout(); 
+            throw error; 
+        }
+    }, []);
+
+    const register = useCallback(async ({ name, password, email }: CreateUserAccount) => {
+        try {
+            const { accessToken, refreshToken } = await fetchWithAuthorization(`/api/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, password, email }),
+            });
+            Cookies.set('accessToken', accessToken, { expires: 1 / 48 });
+            Cookies.set('refreshToken', refreshToken, { expires: 7 });
+            await refreshUser();
+        } catch (error) {
+            console.error('Error creating user:', error);
+            await logout(); 
+            throw error; 
+        }
+    }, []);
+
+    const checkAuth = useCallback(async () => {
+        setIsLoading(true);
+        const token = Cookies.get('accessToken');
+
+        if (!token) {
+            await logout();
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            const fetchedUser = await getUser();
+            if (fetchedUser) {
+                setAuthState({ user: fetchedUser, isAuthenticated: true, isLoading: false });
+            } else {
+               
+                console.warn("No user data fetched during initial check. Logging out.");
+                await logout();
+            }
+        } catch (error) {
+            console.error("Error during initial authentication check:", error);
+            await logout();
+        } finally {
+            setIsLoading(false); 
+        }
+    }, []);
+
+    useEffect(() => {
+        checkAuth();
+    }, []);
+
+    const value = useMemo<AuthContextType>(() => ({
+        isAuthenticated: authState.isAuthenticated,
+        user: authState.user,
+        login,
+        logout,
+        register,
+        refreshUser,
+        getUser,
+    }), [authState, login, logout, register, refreshUser, getUser]);
+
+    if (authState.isLoading) {
+        return <div>Loading authentication...</div>;
     }
-  };
 
-  React.useEffect(() => {
-    checkAuth();
-  }, []);
-
-
-
-  const value = React.useMemo(() => ({
-    isAuthenticated: authState.isAuthenticated,
-    user: authState.user,
-    login,
-    logout,
-    register,
-    refreshUser,
-    getUser,
-  }), [authState]);
-  if (authState.isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
 };

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { URL } from 'url';
 
 export function middleware(request: NextRequest) {
   const accessToken = request.cookies.get('accessToken')?.value;
@@ -10,7 +9,7 @@ export function middleware(request: NextRequest) {
 
   const authRoutes = ['/login', '/register'];
 
- /* if (protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
+  if (protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
     if (!accessToken) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
@@ -22,7 +21,7 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  return NextResponse.next();*/
+  return NextResponse.next();
 }
 
 // See "Matching Paths" below to learn more

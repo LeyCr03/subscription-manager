@@ -20,6 +20,15 @@ export type UserType = {
     refreshTokenHash?: string | null;
 }
 
+export type UpdateUser = {
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+    profileImage: string;
+    description: string
+}
+
 export type Payment = {
     id: string
     registered_at: Date
@@ -49,7 +58,7 @@ export enum Status {
     SUSPENDED = 'suspended',
 }
 
-export type AgeRange = '18-25' | '25-35' | '35-45' | '45-70';
+export type AgeRange = '-18' | '18-25' | '25-35' | '35-45' | '45-70';
 
 export type CreateAccount = {
     name: string
@@ -83,3 +92,11 @@ export type SuspensionResponse = {
     daysSinceLastPayment: number | null
 }
 
+export type UpdateAccount ={
+    id: string,
+    name: string
+}
+
+export type UserId = {
+    id: string
+}

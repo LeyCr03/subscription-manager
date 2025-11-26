@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CreateAccount, GetAllResponseType, Status, SuspensionResponse } from "../types";
+import { CreateAccount, GetAllResponseType, SuspensionResponse, UpdateAccount, UserId } from "../types";
 
 const serverUrl = process.env.SERVER || "http://localhost:3001";
 console.log(serverUrl)
@@ -37,7 +37,6 @@ export async function createAccount(data: CreateAccount) {
   } catch (error: any) {
     console.debug({ error })
     console.error("Error creating account:", error.message);
-    // Handle the error (e.g., show a user-friendly message)
   }
 }
 
@@ -62,18 +61,34 @@ export async function getLasEntry(accountId: string) {
     return response.data
   } catch (error: any) {
 
-    // Handle the error (e.g., show a user-friendly message)
     throw new Error('Not found', error);
   }
 }
 
+export async function update( data: UpdateAccount ){
+  const account = {
+    id: data.id, 
+    name: data.name
+  }
+ try {
+    const response = await axios.put(
+      `${serverUrl}/api/accounts/${account.id}?name=${account.name}`
+    )
+    console.log({ response })
+    return response.data
+  } catch (error: any) {
 
-export async function deleteAccount(id: string) {
+    throw new Error('Update Error', error);
+  } 
+}
+
+export async function suspend(id: UserId) {
+  const userId = id.id
   try {
-    const response = await axios.delete(`${serverUrl}/api/accounts/${id}`);
+    const response = await axios.put(`${serverUrl}/api/accounts/suspend/${userId}`);
     return response.data;
   } catch (error: any) {
-    console.error("Error deleting account:", error.message);
+    console.error("Error suspending account:", error.message);
   }
 }
 
@@ -114,9 +129,8 @@ export async function getDaysSinceLastPayment(id: string): Promise<SuspensionRes
     return response.data
   } catch (error: any) {
     console.debug({ error })
-    console.error("Error fetching last entry:", error.message);
     // Handle the error (e.g., show a user-friendly message)
-    return { suspensionRisk: false, daysSinceLastPayment: null }
+    throw new Error('Not found', error);
   }
 }
 
@@ -124,7 +138,7 @@ export async function searchAccounts(
   page: number,
   limit: number,
   search: string
-) : Promise<GetAllResponseType> {
+): Promise<GetAllResponseType> {
   try {
     const response = await axios.get(
       `${serverUrl}/api/accounts/filter/by?page=${page}&limit=${limit}&search=${search}`
@@ -133,12 +147,56 @@ export async function searchAccounts(
     return response.data
   } catch (error: any) {
     console.debug({ error })
-     return {
+    return {
       accounts: [],
       total: 0,
     };
   }
 }
+export async function totalRevenue(
+  pricePerEntry: number,
+  subscriptionPrice: number
+) {
+  try {
+    const response = await axios.get(
+      `${serverUrl}/api/accounts/total/revenue?pricePerEntry=${pricePerEntry}&subscriptionPrice=${subscriptionPrice}`
+    )
+    return response.data
+  } catch (error: any) {
+    console.debug({ error })
+
+    throw new Error('Not found', error);
+  }
+
+}
+
+export async function getNewCustomers() {
+    try {
+    const response = await axios.get(
+      `${serverUrl}/api/accounts/new/customers`
+    )
+    return response.data
+  } catch (error: any) {
+    console.debug({ error })
+
+    throw new Error('Not found', error);
+  }
+}
+
+export async function getActiveAccounts() {
+ try {
+    const response = await axios.get(
+      `${serverUrl}/api/accounts/all/active`
+    )
+    return response.data
+  } catch (error: any) {
+    console.debug({ error })
+
+    throw new Error('Not found', error);
+  }
+}
+
+
 
 
 
